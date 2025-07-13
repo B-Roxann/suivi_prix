@@ -1,0 +1,100 @@
+Nous allons procéder à la structuration de notre projet en sous parties
+
+But du projet :
+- Extraire automatiquement les titres et prix des livres depuis les fichiers HTML
+- Structurer les données dans un fichier CSV
+- Analyser les prix :
+- Déterminer les livres les moins chers
+- Afficher les prix moyens par livre
+- Détecter un concurrent systématiquement plus cher ou moins cher
+- Générer un rapport écrit (.txt ou terminal) avec des recommandations marketing
+
+
+
+
+Première partie : 
+- Extraire automatiquement les titres et prix des livres depuis les fichiers HTML
+
+Nous sommes donc dans la partie 'E' du ETL (Extract, Transform, Load)
+
+
+Pseudo-code : 
+Fonction web_site_list()
+Variable
+    web_site_list <- Liste de Dictionnaire
+    booky <- Dictionnaire
+    lireplus <- Dictionnaire
+    pagezen <- Dictionnaire
+Début
+    booky <- {
+        adresse : "booky.html", 
+        balise_produit : "div",
+        classe_produit : "produit",  
+        balise_titre : "h2", 
+        classe_titre : "titre",
+        balise_prix : "p",
+        classe_prix : "prix"
+    }
+    lireplus <- {
+        adresse : "lireplus.html",
+        balise_produit : "article",
+        classe_produit : "livre",  
+        balise_titre : "h3", 
+        classe_titre : "",
+        balise_prix : "span", //Attention peux être "div span"
+        classe_prix : "prix"
+    }
+    pagezen <- {
+        adresse : "pagezen.html",
+        balise_produit : "li",
+        classe_produit : "livre", 
+        balise_titre : "div", 
+        classe_titre : "titre-livre",
+        balise_prix : "p", //Attention peux être "div p"
+        classe_prix : "prix"
+    }
+
+    web_site_list <- "booky.html", "lireplus.html", "pagezen.html"
+Retourner web_site_list
+Fin
+
+
+Fonction Extract(web_site_list)
+Variable
+    liste_des_produits <- liste
+    concurrents <- Dictionnaire
+Début
+    Pour site dans web_site_list:
+        liste_des_produits <- Extract_product_list(site[adresse], site[balise, classe)
+        informations_produits <- Extract_data(liste_des_produits)
+        
+        Pour produits dans liste_des_produits:
+            concurrents[web_site] <- informations_produits
+        Fin Pour
+Fin
+
+
+
+Fonction Extract_product_list(web_site, balise, classe)
+Variable
+    liste_produits <- Liste
+Début
+    liste_produits <- web_site.find_all("balise", class_="classe").string    
+Retourner liste_produits
+Fin
+
+
+Fonction Extract_data(liste_des_produits)
+Variable
+    titre <- CHAINE DE CARACTERES
+    prix <- CHAINE DE CARACTERES
+    informations_produits <- Dictionnaire
+Début
+    Pour produit dans liste_des_produits: 
+        titre <- extraction_titre() // On extrait le titre
+        prix <- extraction_prix()  // On extrait son prix
+        Ajouter_a_la_liste(informations_produits, titre, prix)
+    Fin Pour
+Retourner informations_produits
+Fin
+
