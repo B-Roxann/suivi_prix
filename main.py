@@ -20,9 +20,17 @@ Générer un rapport écrit (.txt ou terminal) avec des recommandations marketin
 '''
 
 # Première partie : extraire automatiquement les titres et prix des livres
-# Fichier booky.html : titre : div class="produit" h2 class="titre" prix : p class_="prix"
-# Fichier pagezen.html : titre : li class="livre" div class="titre-livre"  prix: p class="prix"
-# Fichier lireplus.html : titre : article class="livre" header  prix : div class_="meta" span class="prix"
+# Fichier booky.html :
+#   titre : div class="produit" h2 class="titre"
+#   prix : p class_="prix"
+
+# Fichier pagezen.html :
+#   titre : li class="livre" div class="titre-livre"
+#   prix: p class="prix"
+
+# Fichier lireplus.html :
+#   titre : article class="livre" header
+#   prix : div class_="meta" span class="prix"
 
 
 def web_site_list():
@@ -89,7 +97,12 @@ def Extract(web_site_list):
 
 def Extract_product_list(web_site_dictionnaire, page_soup):
 
-    liste_produits = page_soup.find_all(web_site_dictionnaire["balise_produit"], class_=web_site_dictionnaire["classe_produit"])
+    liste_produits = (
+        page_soup.find_all(
+            web_site_dictionnaire["balise_produit"],
+            class_=web_site_dictionnaire["classe_produit"]
+        )
+    )
     return liste_produits
 
 
@@ -98,8 +111,8 @@ def Extract_data(liste_des_produits, web_site_dictionnaire):
     informations_produits = dict()
 
     for produit in liste_des_produits:
-        titre = extract_title(produit, web_site_dictionnaire)  # On extrait le titre
-        prix = extract_price(produit, web_site_dictionnaire)  # On extrait son prix
+        titre = extract_title(produit, web_site_dictionnaire)
+        prix = extract_price(produit, web_site_dictionnaire)
         informations_produits[titre] = {}
         informations_produits[titre]["prix :"] = prix
 
@@ -109,7 +122,12 @@ def Extract_data(liste_des_produits, web_site_dictionnaire):
 def extract_title(produit, web_site_dictionnaire):
 
     if not web_site_dictionnaire["classe_titre"] == "":
-        titre = produit.find(web_site_dictionnaire["balise_titre"], class_=web_site_dictionnaire["classe_titre"]).get_text()
+        titre = (
+            produit.find(
+                web_site_dictionnaire["balise_titre"],
+                class_=web_site_dictionnaire["classe_titre"]
+            ).get_text()
+        )
     else:
         titre = produit.find(web_site_dictionnaire["balise_titre"]).get_text()
 
@@ -118,7 +136,12 @@ def extract_title(produit, web_site_dictionnaire):
 
 def extract_price(produit, web_site_dictionnaire):
 
-    prix = produit.find(web_site_dictionnaire["balise_prix"], class_=web_site_dictionnaire["classe_prix"]).get_text()
+    prix = (
+        produit.find(
+            web_site_dictionnaire["balise_prix"],
+            class_=web_site_dictionnaire["classe_prix"]
+        ).get_text()
+    )
 
     return prix
 
