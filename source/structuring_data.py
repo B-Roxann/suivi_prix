@@ -30,9 +30,27 @@ def organise_book_price(liste_livres):
     return titre_livre, prix_livre
 
 
+# On uniformise les prix de chaque site
+def formate_price(prix_livre):
+    prix_formate = []
+
+    for prix in prix_livre:
+        # On modifie l'éventuelle "," par un "."
+        if prix.find(","):
+            nouveau_prix = prix.replace(",", ".")
+
+        # On lui retire le "€"
+        nouveau_prix = nouveau_prix.replace("€", "").strip()
+
+        # On ajoute le prix à la liste à renvoyer
+        prix_formate.append(nouveau_prix)
+
+    return prix_formate
+
+
 # Ecriture d'un fichier csv par site web
 def write_csv_file(liste_concurrents):
-    en_tete = ["Titre", "Prix"]
+    en_tete = ["Titre", "Prix", "Devise"]
 
     # Pour chaque site, on va créer un fichier .csv
     for site_concurrent, livres in liste_concurrents.items():
@@ -52,6 +70,8 @@ def write_csv_file(liste_concurrents):
             # On organise les données "titre" et "prix"
             titre_livre, prix_livre = organise_book_price(livres)
 
+            # On formate le prix
+            prix_formater = formate_price(prix_livre)
             # On itère pour ajouter ces données à notre csv
-            for titre, prix in zip(titre_livre, prix_livre):
-                writer_csv.writerow([titre, prix])
+            for titre, prix in zip(titre_livre, prix_formater):
+                writer_csv.writerow([titre, prix, "€"])
