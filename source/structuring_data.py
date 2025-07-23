@@ -50,28 +50,32 @@ def formate_price(prix_livre):
 
 # Ecriture d'un fichier csv par site web
 def write_csv_file(liste_concurrents):
-    en_tete = ["Titre", "Prix", "Devise"]
+    en_tete = ["Titre", "Prix", "Devise", "Site"]
 
-    # Pour chaque site, on va créer un fichier .csv
-    for site_concurrent, livres in liste_concurrents.items():
-        with open(
-            f"csv/{site_concurrent}.csv",
-            mode="w+",
-            encoding="utf-8",
-            newline=""
-        ) as csv_file:
+    # On créer le fichier prix_concurrents.csv
+    # Ou s'il est déjà présent, on écrit à la suite.
+    with open(
+        "csv/prix_concurrents.csv",
+        mode="a+",
+        encoding="utf-8",
+        newline=""
+    ) as csv_file:
 
-            # on prépare notre csv.writer
-            writer_csv = csv.writer(csv_file, delimiter=',')
+        # on prépare notre csv.writer
+        writer_csv = csv.writer(csv_file, delimiter=',')
 
-            # On ajoute les en-têtes
-            writer_csv.writerow(en_tete)
+        # On ajoute les en-têtes
+        writer_csv.writerow(en_tete)
+
+        # On itère sur chaque livres pour chaque site concurrent
+        for site_concurrent, livres in liste_concurrents.items():
 
             # On organise les données "titre" et "prix"
             titre_livre, prix_livre = organise_book_price(livres)
 
             # On formate le prix
             prix_formater = formate_price(prix_livre)
+
             # On itère pour ajouter ces données à notre csv
             for titre, prix in zip(titre_livre, prix_formater):
-                writer_csv.writerow([titre, prix, "€"])
+                writer_csv.writerow([titre, prix, "€", site_concurrent])
