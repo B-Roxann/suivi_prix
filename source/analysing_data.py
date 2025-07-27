@@ -1,89 +1,102 @@
 import csv
+from collections import defaultdict
 
 '''3ème partie du projet :
     Analyser les prix
 - Déterminer les livres les moins chers
 - Afficher les prix moyens par livre
-
-Dans un premier temps :
-    définir :
-        - moins cher : < 27€
-        - abordable : 27€ > prix < 33€
-        - plus cher : > 33€
-
-Dans un second temps :
-    Parcourrir chaque livre de chaque site
-    Les classer dans des listes "prix_bas", "prix_mediant", "plus_haut"
-
-Enfin :
-    afficher les prix moyens par livre
-
 '''
 
 
 def read_file(csv_file):
+    '''
+    Cette fonction va analyser le fichier csv pour en extraire :
+        - La liste de livre
+        - Le prix le plus bas de chaque livre
+        - Le prix moyen de chaque titre commun
+
+    Parameters:
+        liste_livres (list): liste de dictionnaires
+        prix_moyens_livres (list): liste de dictionnaires
+    '''
+
     # On lit le fichier csv
     with open(csv_file, mode="r", encoding="utf-8") as file:
         reader = list(csv.DictReader(file, delimiter=','))
 
-        # On catégorise les prix 
-        categories_prix = group_by_price(reader)
-        # Puis affiche la liste de ceux au plus bas prix
-        print(
-            f"Les livres les moins chers sont {categories_prix['prix_bas']}"
-        )
+        # On créé notre liste de livres triée
+        liste_livres = sort_by_price(sort_by_name(reader))
+
+        # On analyse les prix des livres
+        # et on affiche les prix les moins chers par livres
+        lower_price(liste_livres)
 
         # On analyse la moyenne de prix de chaque livre
-        prix_moyens_livres = average_price(reader)
-        # On itère pour l'afficher
-        for livre, prix in prix_moyens_livres.items():
-            print(
-                f"Le prix moyen du livre {livre} "
-                f"est de {prix:.2f}."
-            )
+        prix_moyens_livres = average_price(liste_livres)
+
+        # On affiche la moyenne des prix par livre
+        print_average_price(prix_moyens_livres)
 
 
-def group_by_price(csv_reader):
-
+def sort_by_name(reader):
     '''
-    Cette fonction regroupe les livres par tranche de prix.
+    Cette fonction construit l'objet defaultDict
+    soit le dictionnaire des livres triés par leur noms
 
     Parameters:
-        prix_bas (list) : liste qui accueil les < 27€
-        prix_mediant (list) : liste qui accueil l'entre 2
-        prix_haut (list) : liste qui accueil les > 33€
+    reader : objet DictReader sous forme de liste
+    liste_livres (list): liste de dictionnaires
 
-        montant (float) : le prix du livre parcouru
+    returns : liste_livres
+    '''
+    # On initialise notre defaultDict
+    liste_livres = defaultdict(list)
 
-    Returns :
-        comparaison_prix (dictionnaire) :
-            les livres triés par prix
+    # On construit liste_livres en regroupant les livres par titres
+    for livre in reader:
+        titre = livre["Titre"]
+        liste_livres[titre].append(livre)
+
+    return liste_livres
+
+
+def sort_by_price(list_of_books):
 
     '''
+    Cette fonction tri les livres par prix
+    dans chaque groupe de livre.
 
-    comparaison_prix = dict()
-    prix_bas = []
-    prix_mediant = []
-    prix_haut = []
+    Parameters:
+        file_of_books (object DictReader) : dictionnaires de livres
 
-    # On itère sur chaque livre dans le fichier csv
-    for livre in csv_reader:
-        montant = float(livre["Prix"])
+    Returns :
+        new_sorted_list
+    '''
+    new_sorted_list = defaultdict(list)
+    for group, books in list_of_books.items():
+        sorted_books = sorted(books, key=lambda book: book["Prix"])
+        for book in range(len(books)):
+            books[book] = sorted_books[book]
+        # Aurait pu être remplacé par books[:] = sorted_books
+        # pour une modification "in-place"
+        new_sorted_list[group] = books
 
-        # On catégorise chaque montant
-        if montant < 27:
-            prix_bas.append(livre)
-        elif montant > 33:
-            prix_mediant.append(livre)
-        else:
-            prix_haut.append(livre)
-    # On ajoute au dictionnaire chaque catégorie de prix
-    comparaison_prix["prix_bas"] = prix_bas
-    comparaison_prix["prix_mediant"] = prix_mediant
-    comparaison_prix["prix_haut"] = prix_haut
+    # On retourne la nouvelle liste de dictionnaires
+    return new_sorted_list
 
-    # On retourne le dictionnaire
-    return comparaison_prix
+
+def lower_price(file_of_books):
+    '''
+    Cette fonction affiche pour chaque livre
+    sur quel site il est moins cher,
+    et à quel prix.
+    '''
+    for group, books in file_of_books.items():
+        print(
+            f'Le livre "{books[0]["Titre"]}" '
+            f'est moins cher chez {books[0]["Site"]}, '
+            f'au prix de {books[0]["Prix"]}{books[0]["Devise"]}.'
+        )
 
 
 def average_price(file_of_books):
@@ -93,55 +106,58 @@ def average_price(file_of_books):
     et le retourne dans un dictionnaire.
 
     Parameters :
-        livre_titre (str) : titre du livre parcouru
-
-        prix_du_livre (float) : son prix
-
-        nombre_d_exemplaires (int) : son nombre d'exemplaires
-
-        moyenne_prix_livre (float) : la moyenne de prix
-
-        prix_moyens_livres (dictionnaire) :
-            Récupère les (clés) livre_titre : (valeurs) moyenne_prix_livre
-
-    Returns : 
+        somme_totale (int)
+        moyenne_prix (int)
+        nombre_exemplaires (int)
         prix_moyens_livres (dictionnaire)
-    '''
 
+    Returns :
+        le dictionnaire de chaque livre avec son prix
+        moyen : prix_moyens_livres
+    '''
     prix_moyens_livres = dict()
 
-    # On itère sur chaque livre du fichier csv
-    for le_livre in file_of_books:
-        livre_titre = le_livre["Titre"]
+    for group, books in file_of_books.items():
+        # On intialise les variables
+        somme_totale = 0
+        moyenne_prix = 0
+        nombre_exemplaires = 0
+        # On itère sur chaque livre pour calculer notre moyenne
+        for book in books:
+            # On récupère le prix du livre parcouru
+            prix = float(book["Prix"])
 
-        # Si le livre a déjà été analysé
-        if livre_titre in prix_moyens_livres:
-            continue  # On passe au prochain livre
+            # On ajoute le prix du livre au total
+            somme_totale += prix
 
-        somme_prix_livre = 0
-        nombre_d_exemplaires = 0
-        moyenne_prix_livre = 0
+            # On incrémente notre compteur d'exemplaires
+            nombre_exemplaires += 1
 
-        # On itère à nouveau pour calculer la moyenne de prix
-        for livres in file_of_books:
-
-            livres_titres = livres["Titre"]
-
-            # Si on trouve un occurence du livre
-            if livre_titre == livres_titres:
-                # On ajoute le montant à la somme
-                somme_prix_livre += float(livres["Prix"])
-                # et on incrémente le compteur d'exemplaires
-                nombre_d_exemplaires += 1
-        # On se prémuni d'une erreur ZeroDivisionError
-        if nombre_d_exemplaires > 0:
-            # On en calcule la moyenne du prix
-            moyenne_prix_livre = somme_prix_livre / nombre_d_exemplaires
+        # On se prémuni de l'erreur ZeroDivisionError
+        if nombre_exemplaires == 0:
+            moyenne_prix = 0
         else:
-            # Sinon moyenne = 0
-            moyenne_prix_livre = 0
-        # On ajoute le titre du livre avec son prix moyen au dictionnaire
-        prix_moyens_livres[livre_titre] = moyenne_prix_livre
+            moyenne_prix = somme_totale / nombre_exemplaires
 
-    # On retourne le dictionnaire
+        # On ajoute le tout à notre liste
+        # en s'assurant que la moyenne reste à 2 décimales
+        # après la virgule
+        prix_moyens_livres[group] = f"{moyenne_prix:.2f}"
+
+    # On retourne notre liste de prix moyens par livres
     return prix_moyens_livres
+
+
+def print_average_price(list_of_average_price):
+
+    '''
+    Cette fonction affiche le prix moyen de chaque livre
+    qui ont le même titre
+    '''
+    # On parcour notre liste de livre
+    # pour afficher le titre du livre et son prix moyen
+    for livre, prix in list_of_average_price.items():
+        print(
+            f"Le prix moyen du livre {livre} "
+            f"est de {prix}€."
+        )
