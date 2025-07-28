@@ -4,48 +4,14 @@ from collections import defaultdict
 
 def read_file(csv_file):
     '''
-    Cette fonction va analyser le fichier csv pour en extraire :
-        - La liste de livre
-        - Le prix le plus bas de chaque livre
-        - Le prix moyen de chaque titre commun
-
-    Parameters:
-        liste_livres (list): liste de dictionnaires
-        prix_moyens_livres (list): liste de dictionnaires
+    Cette fonction lit le fichier csv afin qu'on l'analyse.
     '''
 
     # On lit le fichier csv
     with open(csv_file, mode="r", encoding="utf-8") as file:
         reader = list(csv.DictReader(file, delimiter=','))
 
-        # On créé notre liste de livres triée
-        liste_livres = sort_by_price(sort_by_name(reader))
-
-        # On analyse les prix des livres
-        liste_bas_prix = lower_price(liste_livres)
-        liste_prix_eleves = higher_price(liste_livres)
-
-        # On affiche les prix les moins chers par livres
-        print_lower_price(liste_bas_prix)
-
-        # On affiche les prix les moins chers par livres
-        print_higher_price(liste_prix_eleves)
-
-        # On analyse la moyenne de prix de chaque livre
-        liste_prix_moyens_livres = average_price(liste_livres)
-
-        # On affiche la moyenne des prix par livre
-        print_average_price(liste_prix_moyens_livres)
-
-        # On analyse les données globales de chaque sites
-        analyse = analysing_website(
-            liste_livres,
-            liste_bas_prix,
-            liste_prix_eleves,
-            liste_prix_moyens_livres
-        )
-
-        print_analyse(analyse)
+        return reader
 
 
 def sort_by_name(reader):
@@ -231,73 +197,3 @@ def print_average_price(list_of_average_price):
             f'Le prix moyen du livre "{livre}" '
             f'est de {prix}€.'
         )
-
-
-def initial_values():
-    '''
-    Cette fonction permet d'initialiser les valeurs
-    du dictionnaire de chaque site
-    On incrémentera les valeurs en fonction des tests
-    pour déterminer le nombre de livre qui sont
-    - les moins chers tout concurrent confondu
-    - les plus chers tout concurrent confondu
-    - moins cher que la moyenne de prix du livre
-    - plus cher que la moyenne de prix du livre
-    '''
-    return {
-        'books': 0,
-        'cheapest': 0,
-        'expensive': 0,
-        'less_than_average': 0,
-        'more_than_average': 0
-    }
-
-
-def analysing_website(
-        sorted_books,
-        lower_prices,
-        higher_prices,
-        average_prices):
-
-    # On intialise notre liste de dictionnaire
-    website_analyse = defaultdict(initial_values)
-
-    for group, books in sorted_books.items():
-        for book in books:
-            site = book["Site"]
-            titre = book["Titre"]
-            prix = book["Prix"]
-
-            # On ajoute un livre au compteur
-            website_analyse[site]["books"] += 1
-
-            # On itère sur chaque livre de notre liste des meilleurs prix
-            for livre in lower_prices:
-                # Si le titre et le site coincident
-                if titre == livre["Titre"] and site == livre["Site"]:
-                    # Alors notre site détient un des livres les moins chers
-                    website_analyse[site]["cheapest"] += 1
-
-            # On itère sur chaque livre de notre liste de livre les plus chers
-            for livre in higher_prices:
-                # Si le titre et le site coincident
-                if titre == livre["Titre"] and site == livre["Site"]:
-                    # Alors notre site détient un des livres les plus chers
-                    website_analyse[site]["expensive"] += 1
-
-            # On vérifie maintenant si le prix du livre est
-            # soit inférieur à la moyenne de prix pour son titre
-            for livre, moyenne_prix in average_prices.items():
-                if titre == livre and float(prix) <= float(moyenne_prix):
-                    website_analyse[site]["less_than_average"] += 1
-                # soit supérieure à la moyenne de prix pour son titre
-                elif titre == livre and float(prix) > float(moyenne_prix):
-                    website_analyse[site]["more_than_average"] += 1
-
-    return (website_analyse)
-
-
-def print_analyse(analyse):
-    print("\nAnalyse générales par sites :")
-    for ligne, caracteristiques in analyse.items():
-        print(f"{ligne} : {caracteristiques}.")
