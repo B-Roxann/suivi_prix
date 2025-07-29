@@ -56,7 +56,7 @@ def write_csv_file(liste_concurrents):
     # Ou s'il est déjà présent, on écrit à la suite.
     with open(
         "csv/prix_concurrents.csv",
-        mode="a+",
+        mode="w+",
         encoding="utf-8",
         newline=""
     ) as csv_file:

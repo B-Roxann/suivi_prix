@@ -2,7 +2,7 @@
 import extract_data as ed
 import structuring_data as sd
 import analysing_data as ad
-import analysing_rivalry as ar
+import analysis_report as ar
 
 # Ici le code du programme :
 
@@ -22,16 +22,19 @@ liste_prix_eleves = ad.higher_price(liste_livres)  # Prix les plus hauts
 liste_prix_moyens_livres = ad.average_price(liste_livres)  # Moyenne prix
 
 # Quatrième partie du programme : détecter un concurrent + ou - cher
-analyse = ar.analysing_website(
+analyse = ad.analysing_website(
     liste_livres,
     liste_bas_prix,
     liste_prix_eleves,
     liste_prix_moyens_livres
 )  # Analyse globale pour chaque site
 
-# Cinquième partie du programme : 
-#  Affichage de toutes les informations récoltées
-ad.print_lower_price(liste_bas_prix)
-ad.print_higher_price(liste_prix_eleves)
-ad.print_average_price(liste_prix_moyens_livres)
-ar.print_analyse(analyse)
+# Cinquième partie du programme :
+# Création d'un rapport avec toutes les informations récoltées
+# et une conclusion marketing
+ar.create_report(
+        liste_bas_prix,
+        liste_prix_eleves,
+        liste_prix_moyens_livres,
+        analyse
+    )
