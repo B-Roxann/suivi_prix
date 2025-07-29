@@ -1,0 +1,28 @@
+Analyse des données : Prix le moins cher par livres
+Le livre "Python pour les nuls" est moins cher chez lireplus, au prix de 24.50€.
+Le livre "Automatisez les tâches avec Python" est moins cher chez pagezen, au prix de 30.90€.
+Le livre "Data Science avec Python" est moins cher chez lireplus, au prix de 44.90€.
+
+Analyse des données : Prix le plus élevé par livres
+Le livre "Python pour les nuls" est plus cher chez pagezen, au prix de 26.00€.
+Le livre "Automatisez les tâches avec Python" est plus cher chez booky, au prix de 31.00€.
+Le livre "Data Science avec Python" est plus cher chez pagezen, au prix de 45.10€.
+
+Analyse des données : Prix moyens par livres
+Le prix moyen du livre "Python pour les nuls" est de 25.47€.
+Le prix moyen du livre "Automatisez les tâches avec Python" est de 30.95€.
+Le prix moyen du livre "Data Science avec Python" est de 45.00€.
+
+Analyse générales par sites :
+Le site lireplus est moins cher pour 2 sur 3 livres étudiés,
+et pratique des tarifs généralement inférieurs à la tendance observée.
+Le site booky est situé dans la moyenne du marché sur 3 livres étudiés,
+et pratique des prix plus élevés que la tendance générale.
+Le site pagezen est plus cher pour 2 sur 3 livres étudiés,
+et pratique des prix plus élevés que la tendance générale.
+
+Conclusions marketing :
+Pour le livre "Python pour les nuls", nous devrions fixer notre prix à 25.40€.
+Pour le livre "Automatisez les tâches avec Python", nous devrions fixer notre prix à 30.90€.
+Pour le livre "Data Science avec Python", nous devrions fixer notre prix à 45.00€.
+Ceci nous permettrais de rester compétitif, sans rogner la marge.
