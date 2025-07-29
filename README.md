@@ -19,7 +19,7 @@ Le but étant d'en extraire les données, de les structurer en fichier .csv et d
 - Création d'un rapport marketing automatisé (.txt)
 
 # STRUCTURE DU PROJET
-'''
+```
 .
 ├── csv/                          # Fichier CSV
 │    └── prix_concurrents.csv        # Données extraites
@@ -32,7 +32,7 @@ Le but étant d'en extraire les données, de les structurer en fichier .csv et d
 │    └── analysis_report.py          # Fonctions pour le rapport
 ├── rapport.txt                      # Rapport final
 └── README.md                        # Présentation du projet
-'''
+```
 
 # LANCER LE PROJET
 
